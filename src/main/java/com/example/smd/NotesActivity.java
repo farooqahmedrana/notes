@@ -27,72 +27,25 @@ public class NotesActivity extends Activity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.main);
-        createUi();
+        setContentView(R.layout.main);
+        textArea = (EditText) findViewById(R.id.text_area);
         notes = new ArrayList<Note>();
     }
     
-    private void createUi(){
-    	LinearLayout outerLayout = new LinearLayout(this);    	
-    	outerLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-    	outerLayout.setOrientation(LinearLayout.VERTICAL);
-    	
-    	textArea = new EditText(this);    	
-    	textArea.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT,1f));    	
-     	textArea.setHint("Notes");
-     	textArea.setGravity(Gravity.TOP);
-    	
-    	outerLayout.addView(textArea);
-    	outerLayout.addView(createMenu());
-    	setContentView(outerLayout);
-    }
-    
-    private ViewGroup createMenu(){
-    	LinearLayout layout = new LinearLayout(this);    	
-    	layout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
-    	layout.setOrientation(LinearLayout.HORIZONTAL);    	
-    	layout.setGravity(Gravity.CENTER);
-    	    	
-    	LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
-     	
-     	Button saveButton = new Button(this);     	
-    	saveButton.setLayoutParams(params);
-    	saveButton.setText("Save");
-    	saveButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View arg0) {
-				saveNote();
-			}
-		});
-    	
-    	Button newButton = new Button(this);     	
-    	newButton.setLayoutParams(params);
-    	newButton.setText("New");
-    	newButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View arg0) {
-				newNote();				
-			}
-		});
-    	
-    	Button listButton = new Button(this);     	
-    	listButton.setLayoutParams(params);
-    	listButton.setText("List");
-    	listButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View arg0) {
-				listNotes();				
-			}
-		});
-    	
-    	layout.addView(saveButton);
-    	layout.addView(newButton);
-    	layout.addView(listButton);
-    	
-    	return layout;    	
+    public void buttonClick(View v){
+
+     if(v.getId() == R.id.button_save){
+          saveNote();
+     }
+
+     if(v.getId() == R.id.button_new){
+          newNote();
+     }
+
+     if(v.getId() == R.id.button_list){
+          listNotes();
+     }
+
     }
     
     private void saveNote(){
