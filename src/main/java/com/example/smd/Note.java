@@ -2,8 +2,9 @@ package com.example.smd;
 
 import java.util.Date;
 import java.util.UUID;
+import java.io.Serializable;
 
-public class Note {
+public class Note implements Serializable{
 	
 	private String id;
 	private String content;
