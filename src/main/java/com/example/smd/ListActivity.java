@@ -45,7 +45,8 @@ public class ListActivity extends Activity
     	for(int i=0; i < notes.size(); i++){
     		array[i] = notes.get(i).getContent();
     	}
-    	ArrayAdapter adapter = new ArrayAdapter(this,R.layout.simple_list,array);
+
+     NoteListAdapter adapter = new NoteListAdapter(this,notes);
     	view.setAdapter(adapter);    	
     	setContentView(view);
     }
