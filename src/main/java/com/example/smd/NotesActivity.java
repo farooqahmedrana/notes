@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.io.*;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Layout;
 import android.view.Gravity;
@@ -118,7 +119,10 @@ public class NotesActivity extends Activity
     }
      
     private void listNotes(){
-        showMessage("Total " + notes.size() + " notes");
+        //showMessage("Total " + notes.size() + " notes");
+    	Intent intent = new Intent(this,ListActivity.class);
+    	intent.putExtra("list",notes);
+    	startActivity(intent);
     }
 
     private void showMessage(String message){

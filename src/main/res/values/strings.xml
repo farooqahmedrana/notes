@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Notes</string>
+    <string name="newstring">New</string>
+    <string name="save">Save</string>
+    <string name="list">List</string>
+    <string name="notes">Notes</string>
 </resources>

@@ -28,4 +28,8 @@ public class Note implements Serializable{
 		this.content = content;
 	}
 	
+	public String getContent(){
+		return content;
+	}
+	
 }
