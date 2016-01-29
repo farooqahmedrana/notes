@@ -14,6 +14,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -40,6 +41,9 @@ public class NoteListAdapter extends ArrayAdapter<Note>
 
       TextView text = (TextView) convertView.findViewById(R.id.note_list_item_text);
       text.setText(note.getContent());
+      
+      CheckBox check = (CheckBox) convertView.findViewById(R.id.note_list_item_check);
+      check.setChecked(note.isImportant());
 
       Button button = (Button) convertView.findViewById(R.id.note_list_item_button);
       button.setTag(position);

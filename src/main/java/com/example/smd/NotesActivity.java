@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.Toast;
+import android.widget.CheckBox;
 
 public class NotesActivity extends Activity
 {
@@ -23,6 +24,7 @@ public class NotesActivity extends Activity
 	Note currentNote;
 	
 	EditText textArea;
+	CheckBox importanceCheck;
 	
     /** Called when the activity is first created. */
     @Override
@@ -31,30 +33,10 @@ public class NotesActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         textArea = (EditText) findViewById(R.id.text_area);
+        importanceCheck = (CheckBox) findViewById(R.id.importance_check);
         notes = new ArrayList<Note>();
-
     }
-
-    public void onStart(){
-        super.onStart();
-    }
-
-    public void onResume(){
-        super.onResume();
-    }
-
-    public void onPause(){
-        super.onPause();
-    }
-
-    public void onStop(){
-        super.onStop();
-    }
-
-    public void onDestroy(){
-        super.onDestroy();
-    }
-
+    
     public void onSaveInstanceState(Bundle savedInstanceState){
         super.onSaveInstanceState(savedInstanceState);
 
@@ -91,6 +73,15 @@ public class NotesActivity extends Activity
 
     }
     
+    public void checkboxClick(View v){
+    	if(currentNote != null){
+	    
+    		boolean checked = ((CheckBox) v).isChecked();
+    		currentNote.setImportance(checked);
+	    		    	
+    	}
+    }
+    
     private void saveNote(){
     	   String content = textArea.getText().toString();
 
@@ -99,6 +90,7 @@ public class NotesActivity extends Activity
     		 notes.add(currentNote);
     	   }
 
+    	   currentNote.setImportance(importanceCheck.isChecked());
     	   currentNote.setContent(content);
     	
         showMessage("Note saved successfully");
@@ -107,6 +99,7 @@ public class NotesActivity extends Activity
     private void newNote(){
     	   saveNote();
     	   textArea.setText("");
+    	   importanceCheck.setChecked(false);    	  
     	   currentNote = null;
     }
      
