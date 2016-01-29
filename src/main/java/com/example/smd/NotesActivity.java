@@ -33,32 +33,26 @@ public class NotesActivity extends Activity
         textArea = (EditText) findViewById(R.id.text_area);
         notes = new ArrayList<Note>();
 
- 	   showMessage("Create");
     }
 
     public void onStart(){
         super.onStart();
-        showMessage("Start");
     }
 
     public void onResume(){
         super.onResume();
-        showMessage("Resume");
     }
 
     public void onPause(){
         super.onPause();
-        showMessage("Pause");
     }
 
     public void onStop(){
         super.onStop();
-        showMessage("Stop");
     }
 
     public void onDestroy(){
         super.onDestroy();
-        showMessage("Destroy");
     }
 
     public void onSaveInstanceState(Bundle savedInstanceState){
@@ -69,7 +63,6 @@ public class NotesActivity extends Activity
         }
         catch(Exception ex){ }         
 
-        showMessage("SaveInstanceState");
     }
 
     public void onRestoreInstanceState(Bundle savedInstanceState){
@@ -80,7 +73,6 @@ public class NotesActivity extends Activity
         }
         catch(Exception ex){ }
 
-        showMessage("RestoreInstanceState");
     }
     
     public void buttonClick(View v){
@@ -119,10 +111,9 @@ public class NotesActivity extends Activity
     }
      
     private void listNotes(){
-        //showMessage("Total " + notes.size() + " notes");
-    	Intent intent = new Intent(this,ListActivity.class);
-    	intent.putExtra("list",notes);
-    	startActivity(intent);
+    	   Intent intent = new Intent(this,ListActivity.class);
+    	   intent.putExtra("list",notes);
+    	   startActivity(intent);
     }
 
     private void showMessage(String message){
