@@ -11,6 +11,8 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +24,7 @@ import android.widget.Toast;
 public class ListActivity extends Activity
 {
 	ArrayList<Note> notes;
+	int selectedItem;
 	
     /** Called when the activity is first created. */
     @Override
@@ -35,6 +38,7 @@ public class ListActivity extends Activity
         	notes = new ArrayList<Note>();
         }
         
+        selectedItem = -1;        
         createView();
     }
     
@@ -48,15 +52,31 @@ public class ListActivity extends Activity
 
         NoteListAdapter adapter = new NoteListAdapter(this,notes);
     	view.setAdapter(adapter);    	
+    	
+    	view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+       		public void onItemClick(AdapterView<?> parent, View view, int position,long id) {
+    			selectedItem = position;
+    			prepareResult();
+    			finish();
+    		}
+		});
+    	
     	setContentView(view);
+		
+    }
+    
+    private void prepareResult(){
+    	Intent intent = new Intent();
+    	intent.putExtra("list", notes);
+    	intent.putExtra("selecteditemindex", selectedItem);
+    	setResult(RESULT_OK, intent);
     }
     
     @Override
     public void onBackPressed() {
-    	Intent intent = new Intent();
-    	intent.putExtra("list", notes);
-    	setResult(RESULT_OK, intent);
+    	prepareResult();
     	super.onBackPressed();
     }
-
+    
+    
 }

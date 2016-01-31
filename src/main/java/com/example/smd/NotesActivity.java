@@ -122,7 +122,18 @@ public class NotesActivity extends Activity
        	if(requestCode == REQUEST_CODE){
        		if(resultCode == RESULT_OK){
        			notes = (ArrayList<Note>) data.getSerializableExtra("list");
+       			
+       			int selectedItemIndex = data.getIntExtra("selecteditemindex", -1);
+       			if(selectedItemIndex != -1){
+       				setNote(selectedItemIndex);       				
+       			}
        		}
        	}
+    }
+    
+    private void setNote(int index){
+    	currentNote = notes.get(index);
+    	textArea.setText(currentNote.getContent());
+    	importanceCheck.setChecked(currentNote.isImportant());
     }
 }
