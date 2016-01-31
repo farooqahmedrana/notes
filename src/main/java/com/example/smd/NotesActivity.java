@@ -26,6 +26,8 @@ public class NotesActivity extends Activity
 	EditText textArea;
 	CheckBox importanceCheck;
 	
+	final int REQUEST_CODE = 1; 
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -106,11 +108,21 @@ public class NotesActivity extends Activity
     private void listNotes(){
     	   Intent intent = new Intent(this,ListActivity.class);
     	   intent.putExtra("list",notes);
-    	   startActivity(intent);
+    	   startActivityForResult(intent,REQUEST_CODE);
     }
 
     private void showMessage(String message){
         Toast toast = Toast.makeText(this,message,Toast.LENGTH_SHORT);
         toast.show();
+    }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+       	super.onActivityResult(requestCode, resultCode, data);
+       	if(requestCode == REQUEST_CODE){
+       		if(resultCode == RESULT_OK){
+       			notes = (ArrayList<Note>) data.getSerializableExtra("list");
+       		}
+       	}
     }
 }

@@ -46,9 +46,17 @@ public class ListActivity extends Activity
     		array[i] = notes.get(i).getContent();
     	}
 
-     NoteListAdapter adapter = new NoteListAdapter(this,notes);
+        NoteListAdapter adapter = new NoteListAdapter(this,notes);
     	view.setAdapter(adapter);    	
     	setContentView(view);
+    }
+    
+    @Override
+    public void onBackPressed() {
+    	Intent intent = new Intent();
+    	intent.putExtra("list", notes);
+    	setResult(RESULT_OK, intent);
+    	super.onBackPressed();
     }
 
 }
