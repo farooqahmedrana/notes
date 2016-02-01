@@ -6,7 +6,9 @@ import java.io.*;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.Layout;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,6 +28,10 @@ public class ListActivity extends Activity
 	ArrayList<Note> notes;
 	int selectedItem;
 	
+	EditText text;
+	ListView list;
+	NoteListAdapter adapter;
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -42,18 +48,36 @@ public class ListActivity extends Activity
         createView();
     }
     
-    private void createView(){
-    	ListView view = new ListView(this);
-    	view.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-    	String [] array = new String[notes.size()];
-    	for(int i=0; i < notes.size(); i++){
-    		array[i] = notes.get(i).getContent();
-    	}
+    private EditText createText(){
+    	text = new EditText(this);
+    	text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
+    	text.setHint("Filter");
+    	text.addTextChangedListener(new TextWatcher(){
 
-        NoteListAdapter adapter = new NoteListAdapter(this,notes);
-    	view.setAdapter(adapter);    	
+			@Override
+			public void afterTextChanged(Editable arg0) { }
+
+			@Override
+			public void beforeTextChanged(CharSequence arg0, int arg1,int arg2, int arg3) { }
+
+			@Override
+			public void onTextChanged(CharSequence text, int start, int before,int count) {
+				adapter.getFilter().filter(text.toString());
+			}
+    		
+    	});
+
+    	return text;
+    }
+    
+    private ListView createList(){
+    	list = new ListView(this);
+    	list.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+    	    	
+        adapter = new NoteListAdapter(this,notes);
+    	list.setAdapter(adapter);    	
     	
-    	view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    	list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
        		public void onItemClick(AdapterView<?> parent, View view, int position,long id) {
     			selectedItem = position;
     			prepareResult();
@@ -61,8 +85,21 @@ public class ListActivity extends Activity
     		}
 		});
     	
-    	setContentView(view);
-		
+    	return list;
+    }
+    
+    private void createView(){
+    	LinearLayout layout = new LinearLayout(this);
+    	layout.setOrientation(LinearLayout.VERTICAL);
+    	layout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT));
+    	layout.setFocusable(true);
+    	layout.setFocusableInTouchMode(true);
+    	
+    	
+    	layout.addView(createText());
+    	layout.addView(createList());
+    	
+    	setContentView(layout);
     }
     
     private void prepareResult(){
