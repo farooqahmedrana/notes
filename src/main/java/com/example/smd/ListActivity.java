@@ -23,7 +23,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class ListActivity extends Activity
+public class ListActivity extends BaseActivity
 {
 	ArrayList<Note> notes;
 	int selectedItem;
@@ -115,5 +115,14 @@ public class ListActivity extends Activity
     	super.onBackPressed();
     }
     
+    @Override
+    protected void newMenu() {
+    	prepareResult();
+    }
     
+    @Override
+    protected void listMenu() {
+        // do nothing
+    }
+        
 }

@@ -19,33 +19,5 @@
     android:hint="Notes"
     android:gravity="top"
     />
-<LinearLayout 
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content" 
-    android:gravity="center"
-    >
-<Button
-    android:id="@+id/button_save"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Save"
-    android:onClick="buttonClick"
-    />
-<Button
-    android:id="@+id/button_new"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="New"
-    android:onClick="buttonClick"
-    />
-<Button
-    android:id="@+id/button_list"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="List"
-    android:onClick="buttonClick"
-    />
-</LinearLayout>
 </LinearLayout>
 

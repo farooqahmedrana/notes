@@ -6,8 +6,12 @@ import java.io.*;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.Layout;
+import android.text.TextWatcher;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -18,12 +22,13 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.Toast;
 import android.widget.CheckBox;
 
-public class NotesActivity extends Activity
+public class NotesActivity extends BaseActivity
 {
 	ArrayList<Note> notes;
 	Note currentNote;
 	
 	EditText textArea;
+	TextWatcher watcher;
 	CheckBox importanceCheck;
 	
 	final int REQUEST_CODE = 1; 
@@ -33,11 +38,14 @@ public class NotesActivity extends Activity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-        textArea = (EditText) findViewById(R.id.text_area);
-        importanceCheck = (CheckBox) findViewById(R.id.importance_check);
         notes = new ArrayList<Note>();
+        setContentView(R.layout.main);        
+        importanceCheck = (CheckBox) findViewById(R.id.importance_check);
+        textArea = (EditText) findViewById(R.id.text_area);
+        textArea.addTextChangedListener(getWatcher());        
     }
+    
+    
     
     public void onSaveInstanceState(Bundle savedInstanceState){
         super.onSaveInstanceState(savedInstanceState);
@@ -59,20 +67,12 @@ public class NotesActivity extends Activity
 
     }
     
-    public void buttonClick(View v){
-
-        if(v.getId() == R.id.button_save){
-           saveNote();
-        }
-
-        if(v.getId() == R.id.button_new){
-           newNote();
-        }
-
-        if(v.getId() == R.id.button_list){
-           listNotes();
-        }
-
+    protected void newMenu(){
+    	newNote();
+    }
+    
+    protected void listMenu(){
+    	listNotes();
     }
     
     public void checkboxClick(View v){
@@ -85,24 +85,23 @@ public class NotesActivity extends Activity
     }
     
     private void saveNote(){
-    	   String content = textArea.getText().toString();
+	   String content = textArea.getText().toString();
 
-    	   if(currentNote == null){
-    		 currentNote = new Note(content);
-    		 notes.add(currentNote);
-    	   }
+	   if(currentNote == null){
+		 currentNote = new Note(content);
+		 notes.add(currentNote);
+	   }
 
-    	   currentNote.setImportance(importanceCheck.isChecked());
-    	   currentNote.setContent(content);
-    	
-        showMessage("Note saved successfully");
+	   currentNote.setImportance(importanceCheck.isChecked());
+	   currentNote.setContent(content);
     }
     
     private void newNote(){
-    	   saveNote();
-    	   textArea.setText("");
-    	   importanceCheck.setChecked(false);    	  
-    	   currentNote = null;
+    	textArea.removeTextChangedListener(getWatcher());
+    	textArea.setText("");
+    	textArea.addTextChangedListener(getWatcher());
+    	importanceCheck.setChecked(false);    	  
+    	currentNote = null;
     }
      
     private void listNotes(){
@@ -135,5 +134,24 @@ public class NotesActivity extends Activity
     	currentNote = notes.get(index);
     	textArea.setText(currentNote.getContent());
     	importanceCheck.setChecked(currentNote.isImportant());
+    }
+    
+    private TextWatcher getWatcher(){
+    	if(watcher == null){
+	    	watcher = new TextWatcher(){
+	
+	        	public void afterTextChanged(Editable arg0) {
+	        		saveNote();
+				}
+	
+				public void beforeTextChanged(CharSequence arg0, int arg1,int arg2, int arg3) { }
+	
+				@Override
+				public void onTextChanged(CharSequence s, int start, int before,int count) { }
+	        	
+	        };
+    	}
+    	
+    	return watcher;
     }
 }
