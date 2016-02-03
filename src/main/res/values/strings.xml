@@ -5,4 +5,6 @@
     <string name="save">Save</string>
     <string name="list">List</string>
     <string name="notes">Notes</string>
+    <string name="open">Open</string>
+    <string name="delete">Delete</string>
 </resources>

@@ -9,11 +9,16 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.Layout;
 import android.text.TextWatcher;
+import android.view.ContextMenu;
 import android.view.Gravity;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -79,11 +84,11 @@ public class ListActivity extends BaseActivity
     	
     	list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
        		public void onItemClick(AdapterView<?> parent, View view, int position,long id) {
-    			selectedItem = position;
-    			prepareResult();
-    			finish();
+    			openNote(position);
     		}
 		});
+    	
+    	registerForContextMenu(list);
     	
     	return list;
     }
@@ -123,6 +128,43 @@ public class ListActivity extends BaseActivity
     @Override
     protected void listMenu() {
         // do nothing
+    }
+    
+    private void openNote(int position){
+    	selectedItem = position;
+		prepareResult();
+		finish();
+    }
+    
+    private void deleteNote(int position){
+    	notes.remove(position);
+    	adapter.notifyDataSetChanged();
+    }
+    
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {
+    	super.onCreateContextMenu(menu, v, menuInfo);
+    	MenuInflater inflater = getMenuInflater();
+    	inflater.inflate(R.menu.context_menu, menu);
+    }
+    
+    
+    
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+    	AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+    	
+    	switch(item.getItemId()){
+    		case R.id.open_item_menu:
+    			openNote(info.position);
+    			return true;
+    		case R.id.delete_item_menu:
+    			deleteNote(info.position);
+    			return true;
+    		default:
+    			return super.onContextItemSelected(item);
+    	}
+       	
     }
         
 }
