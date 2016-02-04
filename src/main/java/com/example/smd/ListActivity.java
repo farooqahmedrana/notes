@@ -123,6 +123,7 @@ public class ListActivity extends BaseActivity
     @Override
     protected void newMenu() {
     	prepareResult();
+     finish();
     }
     
     @Override
