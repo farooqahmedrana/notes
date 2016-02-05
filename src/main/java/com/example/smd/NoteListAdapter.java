@@ -55,7 +55,7 @@ public class NoteListAdapter extends ArrayAdapter<Note> implements Filterable
       }
 
       TextView text = (TextView) convertView.findViewById(R.id.note_list_item_text);
-      text.setText(note.getContent());
+      text.setText(note.getTitle());
       
       CheckBox check = (CheckBox) convertView.findViewById(R.id.note_list_item_check);
       check.setChecked(note.isImportant());
@@ -69,7 +69,6 @@ public class NoteListAdapter extends ArrayAdapter<Note> implements Filterable
             Note note = (Note) v.getTag();
             notes.remove(note);
             filteredNotes.remove(note);
-            //notes.remove(index.intValue());  
             notifyDataSetChanged();
 
          }
@@ -94,7 +93,7 @@ public class NoteListAdapter extends ArrayAdapter<Note> implements Filterable
 		if(constraint != null && constraint.length() > 0){
 			ArrayList<Note> filteredList = new ArrayList<Note>();
 			for(int i=0; i < notes.size(); i++){
-				if(notes.get(i).getContent().contains(constraint)){
+				if(notes.get(i).contains(constraint.toString())){
 					filteredList.add(notes.get(i));
 				}
 			}

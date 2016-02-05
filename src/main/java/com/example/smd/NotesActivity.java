@@ -27,7 +27,9 @@ public class NotesActivity extends BaseActivity
 	ArrayList<Note> notes;
 	Note currentNote;
 	
-	EditText textArea;
+	EditText textContent;
+	EditText textTitle;
+
 	TextWatcher watcher;
 	CheckBox importanceCheck;
 	
@@ -41,11 +43,12 @@ public class NotesActivity extends BaseActivity
         notes = new ArrayList<Note>();
         setContentView(R.layout.main);        
         importanceCheck = (CheckBox) findViewById(R.id.importance_check);
-        textArea = (EditText) findViewById(R.id.text_area);
-        textArea.addTextChangedListener(getWatcher());        
+        textContent = (EditText) findViewById(R.id.text_content);
+        textTitle = (EditText) findViewById(R.id.text_title);
+        textContent.addTextChangedListener(getWatcher());        
     }
     
-    
+        
     
     public void onSaveInstanceState(Bundle savedInstanceState){
         super.onSaveInstanceState(savedInstanceState);
@@ -85,21 +88,24 @@ public class NotesActivity extends BaseActivity
     }
     
     private void saveNote(){
-	   String content = textArea.getText().toString();
+	   String title = textTitle.getText().toString();
+	   String content = textContent.getText().toString();
 
 	   if(currentNote == null){
-		 currentNote = new Note(content);
+		 currentNote = new Note(title,content);
 		 notes.add(currentNote);
 	   }
 
 	   currentNote.setImportance(importanceCheck.isChecked());
 	   currentNote.setContent(content);
+	   currentNote.setTitle(title);
     }
     
     private void newNote(){
-    	textArea.removeTextChangedListener(getWatcher());
-    	textArea.setText("");
-    	textArea.addTextChangedListener(getWatcher());
+    	textContent.removeTextChangedListener(getWatcher());     
+    	textContent.setText("");
+    	textContent.addTextChangedListener(getWatcher());
+     textTitle.setText("");
     	importanceCheck.setChecked(false);    	  
     	currentNote = null;
     }
@@ -132,7 +138,7 @@ public class NotesActivity extends BaseActivity
     
     private void setNote(int index){
     	currentNote = notes.get(index);
-    	textArea.setText(currentNote.getContent());
+    	textContent.setText(currentNote.getContent());
     	importanceCheck.setChecked(currentNote.isImportant());
     }
     

@@ -3,21 +3,30 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="1dp"
     >
-<CheckBox
-    android:id="@+id/importance_check"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"    
-    style="?android:attr/starStyle"
-    android:onClick="checkboxClick" 
-    />
-<EditText
-    android:id="@+id/text_area"
+<LinearLayout 
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    >
+<EditText
+    android:id="@+id/text_title"
+    style="@style/notesTitle"
     android:layout_weight="1"
-    android:hint="Notes"
-    android:gravity="top"
+    android:hint="Title"
+    />
+<CheckBox
+    android:id="@+id/importance_check"
+    style="@style/Notes.StarCheckBox"
+    android:onClick="checkboxClick" 
+    />
+</LinearLayout>
+<EditText
+    android:id="@+id/text_content"
+    style="@style/notesContent"
+    android:layout_weight="1"
+    android:hint="Content"
     />
 </LinearLayout>
 

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="Notes" parent="@android:style/Theme.Holo.Light" />
+    <style name="Notes.Text">
+        <item name="android:layout_width">match_parent </item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">top|left</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:background">@drawable/textbackground</item>
+    </style>
+    <style name="Notes.Text.MultiLine">
+        <item name="android:inputType">textMultiLine</item>
+    </style>
+    <style name="Notes.StarCheckBox" parent="@android:style/Widget.Holo.Light.CompoundButton.Star">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="notesTitle" parent="Notes.Text" />
+    <style name="notesContent" parent="Notes.Text.MultiLine" />
+</resources>

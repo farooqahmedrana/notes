@@ -7,6 +7,7 @@ import java.io.Serializable;
 public class Note implements Serializable{
 	
 	private String id;
+     private String title;
 	private String content;
 	private boolean important;
 	private Date creationDateTime;
@@ -15,8 +16,9 @@ public class Note implements Serializable{
 		init();
 	}
 	
-	public Note(String content){
+	public Note(String title,String content){
 		init();
+		this.title = title;
 		this.content = content;
 	}
 	
@@ -29,11 +31,19 @@ public class Note implements Serializable{
 	public void setContent(String content){
 		this.content = content;
 	}
+
+	public void setTitle(String title){
+		this.title = title;
+	}
 	
 	public String getContent(){
 		return content;
 	}
-	
+
+	public String getTitle(){
+		return title;
+	}
+
 	public void setImportance(boolean value){
 		important = value;
 	}
@@ -41,5 +51,8 @@ public class Note implements Serializable{
 	public boolean isImportant(){
 		return important;
 	}
-	
+
+     public boolean contains(String text){
+		return getTitle().contains(text) || getContent().contains(text);
+	}
 }
