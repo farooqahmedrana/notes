@@ -50,6 +50,15 @@ public class NotesActivity extends BaseActivity
         textContent = (EditText) findViewById(R.id.text_content);
         textTitle = (EditText) findViewById(R.id.text_title);
         textContent.addTextChangedListener(getWatcher());        
+        handleIntent();
+    }
+
+    private void handleIntent(){
+        Intent intent = getIntent();
+        if (intent.getData().getScheme().equals("note")){
+            String text = intent.getStringExtra("message");
+            textContent.setText(text);
+        }
     }
 
     @Override    
