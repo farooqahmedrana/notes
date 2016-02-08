@@ -12,6 +12,7 @@ import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -21,6 +22,8 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.Toast;
 import android.widget.CheckBox;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 
 public class NotesActivity extends BaseActivity
 {
@@ -34,6 +37,7 @@ public class NotesActivity extends BaseActivity
 	CheckBox importanceCheck;
 	
 	final int REQUEST_CODE = 1; 
+     final int MENU_SEND = 1;
 	
     /** Called when the activity is first created. */
     @Override
@@ -47,8 +51,24 @@ public class NotesActivity extends BaseActivity
         textTitle = (EditText) findViewById(R.id.text_title);
         textContent.addTextChangedListener(getWatcher());        
     }
-    
-        
+
+    @Override    
+    public boolean onCreateOptionsMenu(Menu menu){
+        super.onCreateOptionsMenu(menu);
+        menu.add(0,MENU_SEND,0,"Send");
+        return true;
+    }
+
+     @Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()){
+			case MENU_SEND:
+				sendMenu();
+				return true;
+               default:
+                    return super.onOptionsItemSelected(item);
+          }
+     }  
     
     public void onSaveInstanceState(Bundle savedInstanceState){
         super.onSaveInstanceState(savedInstanceState);
@@ -76,6 +96,10 @@ public class NotesActivity extends BaseActivity
     
     protected void listMenu(){
     	listNotes();
+    }
+
+    protected void sendMenu(){
+     sendNote();
     }
     
     public void checkboxClick(View v){
@@ -109,11 +133,22 @@ public class NotesActivity extends BaseActivity
     	importanceCheck.setChecked(false);    	  
     	currentNote = null;
     }
-     
+       
     private void listNotes(){
     	   Intent intent = new Intent(this,ListActivity.class);
     	   intent.putExtra("list",notes);
     	   startActivityForResult(intent,REQUEST_CODE);
+    }
+
+    private void sendNote(){
+	   Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("sms:"));
+    	   intent.putExtra("sms_body",currentNote.getContent());
+
+        if(intent.resolveActivity(getPackageManager()) != null){
+    	      startActivity(intent);
+        }
+
     }
 
     private void showMessage(String message){
