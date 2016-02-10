@@ -55,9 +55,13 @@ public class NotesActivity extends BaseActivity
 
     private void handleIntent(){
         Intent intent = getIntent();
-        if (intent.getData().getScheme().equals("note")){
-            String text = intent.getStringExtra("message");
-            textContent.setText(text);
+        
+        if (intent != null ){
+            Uri uri = intent.getData();
+            if(uri != null && uri.getScheme().equals("note")){
+             String text = intent.getStringExtra("message");
+             textContent.setText(text);
+            }
         }
     }
 
