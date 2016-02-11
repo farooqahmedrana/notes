@@ -3,8 +3,11 @@ package com.example.smd;
 import java.util.Date;
 import java.util.UUID;
 import java.io.Serializable;
+import android.content.SharedPreferences;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
 
-public class Note implements Serializable{
+public class Note implements Serializable,Persistable{
 	
 	private String id;
      private String title;
@@ -55,4 +58,41 @@ public class Note implements Serializable{
      public boolean contains(String text){
 		return getTitle().contains(text) || getContent().contains(text);
 	}
+
+     public String getId(){
+          return id;
+     }
+  
+     public String getType(){
+          return getClass().getName();
+     }
+
+     public void save(SharedPreferences dataStore){
+          SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmssZ");
+
+          SharedPreferences.Editor editor = dataStore.edit();
+          editor.putString("id",id);
+          editor.putString("title",title);
+          editor.putString("content",content);
+          editor.putString("creationdatetime",dateFormat.format(creationDateTime));
+          editor.putBoolean("important",important);
+
+          editor.commit();
+     }
+
+     public void load(SharedPreferences dataStore){
+          SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmssZ");
+
+          id = dataStore.getString("id","");
+          title = dataStore.getString("title","");
+          content = dataStore.getString("content","");
+          important = dataStore.getBoolean("important",false);
+          try{
+              creationDateTime = dateFormat.parse(dataStore.getString("creationdatetime",""));
+          }
+          catch(ParseException ex){
+
+          }
+
+     }
 }

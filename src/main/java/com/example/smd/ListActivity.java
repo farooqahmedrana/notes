@@ -43,16 +43,16 @@ public class ListActivity extends BaseActivity
     {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        notes = (ArrayList<Note>) intent.getSerializableExtra("list");
-        
-        if(notes == null){
-        	notes = new ArrayList<Note>();
-        }
-        
+//        notes = (ArrayList<Note>) intent.getSerializableExtra("list");
+
+        notes = new ArrayList<Note>();
+        PersistableCollection<Note> collection = new PersistableCollection(notes);
+        collection.load(getApplicationContext());
+       
         selectedItem = -1;        
         createView();
     }
-    
+
     private EditText createText(){
     	text = new EditText(this);
     	text.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
@@ -109,7 +109,7 @@ public class ListActivity extends BaseActivity
     
     private void prepareResult(){
     	Intent intent = new Intent();
-    	intent.putExtra("list", notes);
+//    	intent.putExtra("list", notes);
     	intent.putExtra("selecteditemindex", selectedItem);
     	setResult(RESULT_OK, intent);
     }

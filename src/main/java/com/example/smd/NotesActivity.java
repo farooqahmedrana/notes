@@ -82,15 +82,27 @@ public class NotesActivity extends BaseActivity
                     return super.onOptionsItemSelected(item);
           }
      }  
+
+    public void onPause(){
+       super.onPause();
+       PersistableCollection<Note> collection = new PersistableCollection(notes);
+       collection.save(getApplicationContext());
+    }
+
+    public void onResume(){
+       super.onResume();
+       notes = new ArrayList<Note>();
+       PersistableCollection<Note> collection = new PersistableCollection(notes);
+       collection.load(getApplicationContext());
+    }
     
-    public void onSaveInstanceState(Bundle savedInstanceState){
+/*    public void onSaveInstanceState(Bundle savedInstanceState){
         super.onSaveInstanceState(savedInstanceState);
 
         try{
            savedInstanceState.putSerializable("noteslist",notes);
         }
         catch(Exception ex){ }         
-
     }
 
     public void onRestoreInstanceState(Bundle savedInstanceState){
@@ -102,7 +114,7 @@ public class NotesActivity extends BaseActivity
         catch(Exception ex){ }
 
     }
-    
+*/    
     protected void newMenu(){
     	newNote();
     }
@@ -174,7 +186,7 @@ public class NotesActivity extends BaseActivity
        	super.onActivityResult(requestCode, resultCode, data);
        	if(requestCode == REQUEST_CODE){
        		if(resultCode == RESULT_OK){
-       			notes = (ArrayList<Note>) data.getSerializableExtra("list");
+//       			notes = (ArrayList<Note>) data.getSerializableExtra("list");
        			
        			int selectedItemIndex = data.getIntExtra("selecteditemindex", -1);
        			if(selectedItemIndex != -1){
