@@ -2,9 +2,12 @@ package com.example.smd;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import java.io.*;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.AbstractCollection;
+import org.xmlpull.v1.*;
+import android.util.Log;
 
 public class PersistableCollection<T extends Persistable> extends AbstractCollection {
 
@@ -24,41 +27,60 @@ public class PersistableCollection<T extends Persistable> extends AbstractCollec
      }
 
      public void save(Context context){
-        SharedPreferences preferences = context.getSharedPreferences(NAME,Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
+        String header = "<objects size='" + size() + "' />";
+        String footer = "</objects>";
 
-        editor.putInt("size",size());
+        BufferedOutputStream stream = null;
+        try{
+           File file = new File(context.getFilesDir(), NAME);
+           stream = new BufferedOutputStream(new FileOutputStream(file));
+           Writer writer = new OutputStreamWriter(stream,"UTF-8");
+           writer.write(header);
 
-        int i=0;
+           Iterator iterator = collection.iterator();
+           while(iterator.hasNext()){
+              Persistable object = (Persistable) iterator.next();
+              writer.write("<object id='" + object.getId() + "' type='" + object.getType() + "'>");
 
-        Iterator iterator = collection.iterator();
-        while(iterator.hasNext()){
-           Persistable object = (Persistable) iterator.next();
+              ByteArrayOutputStream objectStream = new ByteArrayOutputStream();
+              object.save(objectStream);
+              writer.write(new String(objectStream.toByteArray(),"UTF-8"));
 
-           editor.putString("obj" + i,object.getId() + ";" + object.getType());
-           object.save(context.getSharedPreferences(object.getId(),Context.MODE_PRIVATE));                      
-           i++;
+              writer.write("</object>");
+           }
+
+           writer.write(footer);
+           writer.close();
+        }
+        catch(Exception ex){
+
+        }
+        finally{
+           if (stream != null) try { stream.close(); } catch(Exception ex) { }
         }
 
-        editor.commit();
      }
 
      public void load(Context context){
-        SharedPreferences preferences = context.getSharedPreferences(NAME,Context.MODE_PRIVATE);
+         try{
+            XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+            File file = new File(context.getFilesDir(), NAME);
+            BufferedInputStream stream = new BufferedInputStream(new FileInputStream(file));
+            parser.setInput(stream,"UTF-8");
 
-        int size = preferences.getInt("size",0);
+            while(parser.next() != XmlPullParser.END_DOCUMENT){
+               if(parser.getEventType() == XmlPullParser.START_TAG &&
+                  parser.getName().equals("object")){
 
-        for(int i=0; i < size; i++) {
-           String objInfo = preferences.getString("obj" + i,"");
-           if(objInfo != ""){
-                String objId = objInfo.substring(0,objInfo.indexOf(";"));
-                String objType = objInfo.substring(objInfo.indexOf(";")+1);
+                  T object = getObject(parser.getAttributeValue("","type"));
+                  String contents = readInnerContents(parser);
+                  object.load(new ByteArrayInputStream(contents.getBytes("UTF-8")));
+                  collection.add(object);
 
-                T obj = getObject(objType);
-                obj.load(context.getSharedPreferences(objId,Context.MODE_PRIVATE));
-                collection.add(obj);
-           }          
-        }
+               }
+            }
+
+         } catch(Exception ex){ }
 
      }
 
@@ -67,5 +89,35 @@ public class PersistableCollection<T extends Persistable> extends AbstractCollec
              Class c = Class.forName(type);
              return (T) c.newInstance();
           } catch(Exception ex) { return null; }
+     }
+
+     private String readInnerContents(XmlPullParser parser) throws XmlPullParserException,IOException{
+        StringBuilder builder = new StringBuilder();
+ 
+        int depth = 1;
+        
+        while (depth != 0){
+           parser.next();
+           if(parser.getEventType() == XmlPullParser.START_TAG){
+              StringBuilder attributes = new StringBuilder();
+              for(int i=0; i < parser.getAttributeCount(); i++){
+                 attributes.append(" " + parser.getAttributeName(i) + "='" + parser.getAttributeValue(i) + "'");
+              }
+
+              builder.append("<" + parser.getName() + attributes.toString() + ">");
+              depth++;
+           }
+           else if(parser.getEventType() == XmlPullParser.END_TAG){
+              depth--;
+              if(depth != 0){
+                 builder.append("</" + parser.getName() + ">");
+              }
+           }
+           else{
+              builder.append(parser.getText());
+           }
+        }
+
+        return builder.toString();
      }
 }

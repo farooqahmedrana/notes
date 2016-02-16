@@ -1,11 +1,12 @@
 package com.example.smd;
 
-import android.content.SharedPreferences;
+import java.io.OutputStream;
+import java.io.InputStream;
 
 public interface Persistable{
 	
-     public void save(SharedPreferences dataStore);
-     public void load(SharedPreferences dataStore);
+     public void save(OutputStream dataStore);
+     public void load(InputStream dataStore);
      public String getId();
      public String getType();
 }
