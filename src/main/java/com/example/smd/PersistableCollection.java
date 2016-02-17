@@ -1,7 +1,8 @@
 package com.example.smd;
 
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.database.sqlite.*;
+import android.database.*;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.AbstractCollection;
@@ -24,42 +25,27 @@ public class PersistableCollection<T extends Persistable> extends AbstractCollec
      }
 
      public void save(Context context){
-        SharedPreferences preferences = context.getSharedPreferences(NAME,Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-
-        editor.putInt("size",size());
-
-        int i=0;
+        NotesDbHelper dbHelper = new NotesDbHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         Iterator iterator = collection.iterator();
         while(iterator.hasNext()){
            Persistable object = (Persistable) iterator.next();
-
-           editor.putString("obj" + i,object.getId() + ";" + object.getType());
-           object.save(context.getSharedPreferences(object.getId(),Context.MODE_PRIVATE));                      
-           i++;
+           object.save(db);                      
         }
-
-        editor.commit();
      }
 
      public void load(Context context){
-        SharedPreferences preferences = context.getSharedPreferences(NAME,Context.MODE_PRIVATE);
+        NotesDbHelper dbHelper = new NotesDbHelper(context);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT * FROM Notes";
+        Cursor cursor = db.rawQuery(query,null);
 
-        int size = preferences.getInt("size",0);
-
-        for(int i=0; i < size; i++) {
-           String objInfo = preferences.getString("obj" + i,"");
-           if(objInfo != ""){
-                String objId = objInfo.substring(0,objInfo.indexOf(";"));
-                String objType = objInfo.substring(objInfo.indexOf(";")+1);
-
-                T obj = getObject(objType);
-                obj.load(context.getSharedPreferences(objId,Context.MODE_PRIVATE));
-                collection.add(obj);
-           }          
+        while(cursor.moveToNext()){
+           T object = getObject("com.example.smd.Note");
+           object.load(cursor);
+           collection.add(object);
         }
-
      }
 
      public T getObject(String type){

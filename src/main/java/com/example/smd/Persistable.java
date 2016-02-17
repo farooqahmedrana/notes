@@ -1,11 +1,12 @@
 package com.example.smd;
 
-import android.content.SharedPreferences;
+import android.database.*;
+import android.database.sqlite.*;
 
 public interface Persistable{
 	
-     public void save(SharedPreferences dataStore);
-     public void load(SharedPreferences dataStore);
+     public void save(SQLiteDatabase dataStore);
+     public void load(Cursor dataStore);
      public String getId();
      public String getType();
 }

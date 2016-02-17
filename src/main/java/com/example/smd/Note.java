@@ -3,7 +3,9 @@ package com.example.smd;
 import java.util.Date;
 import java.util.UUID;
 import java.io.Serializable;
-import android.content.SharedPreferences;
+import android.content.ContentValues;
+import android.database.sqlite.*;
+import android.database.*;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
@@ -67,28 +69,28 @@ public class Note implements Serializable,Persistable{
           return getClass().getName();
      }
 
-     public void save(SharedPreferences dataStore){
+     public void save(SQLiteDatabase dataStore){
           SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmssZ");
 
-          SharedPreferences.Editor editor = dataStore.edit();
-          editor.putString("id",id);
-          editor.putString("title",title);
-          editor.putString("content",content);
-          editor.putString("creationdatetime",dateFormat.format(creationDateTime));
-          editor.putBoolean("important",important);
+          ContentValues values = new ContentValues();
+          values.put("Id",id);
+          values.put("Title",title);
+          values.put("Content",content);
+          values.put("Important",important);
+          values.put("CreationDateTime",dateFormat.format(creationDateTime));
 
-          editor.commit();
+          dataStore.insertWithOnConflict("Notes",null,values,SQLiteDatabase.CONFLICT_REPLACE);
      }
 
-     public void load(SharedPreferences dataStore){
+     public void load(Cursor dataStore){
           SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmssZ");
 
-          id = dataStore.getString("id","");
-          title = dataStore.getString("title","");
-          content = dataStore.getString("content","");
-          important = dataStore.getBoolean("important",false);
+          id = dataStore.getString(dataStore.getColumnIndex("Id"));
+          title = dataStore.getString(dataStore.getColumnIndex("Title"));
+          content = dataStore.getString(dataStore.getColumnIndex("Content"));
+          important = dataStore.getInt(dataStore.getColumnIndex("Important")) == 1 ? true : false;
           try{
-              creationDateTime = dateFormat.parse(dataStore.getString("creationdatetime",""));
+              creationDateTime = dateFormat.parse(dataStore.getString(dataStore.getColumnIndex("CreationDateTime")));
           }
           catch(ParseException ex){
 
