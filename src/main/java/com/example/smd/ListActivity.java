@@ -138,7 +138,10 @@ public class ListActivity extends BaseActivity
     }
     
     private void deleteNote(int position){
+     Note note = notes.get(position);
     	notes.remove(position);
+     NotesDbHelper dbHelper = new NotesDbHelper(getApplicationContext());
+     note.delete(dbHelper.getWritableDatabase());
     	adapter.notifyDataSetChanged();
     }
     

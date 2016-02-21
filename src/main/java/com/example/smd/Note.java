@@ -97,4 +97,10 @@ public class Note implements Serializable,Persistable{
           }
 
      }
+
+     public void delete(SQLiteDatabase dataStore){
+          String[] args = new String[1];
+          args[0] = id;
+          dataStore.delete("Notes","Id = ?",args);
+     }
 }

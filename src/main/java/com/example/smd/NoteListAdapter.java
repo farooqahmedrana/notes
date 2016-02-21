@@ -69,6 +69,8 @@ public class NoteListAdapter extends ArrayAdapter<Note> implements Filterable
             Note note = (Note) v.getTag();
             notes.remove(note);
             filteredNotes.remove(note);
+            NotesDbHelper dbHelper = new NotesDbHelper(getContext());
+            note.delete(dbHelper.getWritableDatabase());
             notifyDataSetChanged();
 
          }

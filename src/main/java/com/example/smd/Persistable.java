@@ -7,6 +7,7 @@ public interface Persistable{
 	
      public void save(SQLiteDatabase dataStore);
      public void load(Cursor dataStore);
+     public void delete(SQLiteDatabase dataStore);
      public String getId();
      public String getType();
 }
