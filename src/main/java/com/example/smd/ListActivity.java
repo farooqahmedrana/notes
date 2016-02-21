@@ -45,12 +45,18 @@ public class ListActivity extends BaseActivity
         Intent intent = getIntent();
 //        notes = (ArrayList<Note>) intent.getSerializableExtra("list");
 
-        notes = new ArrayList<Note>();
-        PersistableCollection<Note> collection = new PersistableCollection(notes);
-        collection.load(getApplicationContext());
+       notes = new ArrayList<Note>();
+       PersistableCollection<Note> collection = new PersistableCollection(notes);
+       collection.load(getApplicationContext());
        
         selectedItem = -1;        
         createView();
+    }
+
+    public void onPause(){
+       super.onPause();
+       PersistableCollection<Note> collection = new PersistableCollection(notes);
+       collection.save(getApplicationContext());
     }
 
     private EditText createText(){
@@ -138,8 +144,8 @@ public class ListActivity extends BaseActivity
     }
     
     private void deleteNote(int position){
-    	notes.remove(position);
-    	adapter.notifyDataSetChanged();
+    	  notes.remove(position);
+    	  adapter.notifyDataSetChanged();
     }
     
     @Override

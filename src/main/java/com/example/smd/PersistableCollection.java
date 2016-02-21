@@ -27,6 +27,7 @@ public class PersistableCollection<T extends Persistable> extends AbstractCollec
      }
 
      public void save(Context context){
+        Log.i("Notes"," ******** " + size());
         String header = "<objects size='" + size() + "' />";
         String footer = "</objects>";
 
