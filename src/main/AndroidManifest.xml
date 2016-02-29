@@ -3,7 +3,8 @@
       package="com.example.smd"
       android:versionCode="1"
       android:versionName="1.0">
-    <uses-sdk android:minSdkVersion="1" android:targetSdkVersion="19"/>
+    <uses-sdk android:minSdkVersion="5" android:targetSdkVersion="19"/>
+
     <application android:label="@string/app_name" android:icon="@drawable/ic_launcher"
                  android:theme="@style/Notes">
         
@@ -20,11 +21,15 @@
             </intent-filter>            
         </activity>
         <activity android:name="com.example.smd.ListActivity"
-        android:label="ListActivity"
-        android:parentActivityName="com.example.smd.NotesActivity" >
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value="com.example.smd.NotesActivity" />
-    </activity>
+                  android:label="ListActivity"
+                  android:parentActivityName="com.example.smd.NotesActivity" >
+
+                  <meta-data android:name="android.support.PARENT_ACTIVITY"
+                             android:value="com.example.smd.NotesActivity" />
+        </activity>
+        <provider android:name="NotesProvider"
+                  android:authorities="com.example.smd.notesprovider"
+                  android:exported="true" />
+
     </application>
 </manifest>
