@@ -31,5 +31,7 @@
                   android:authorities="com.example.smd.notesprovider"
                   android:exported="true" />
 
+        <service android:name="NotesDataSyncService" />
+
     </application>
 </manifest>

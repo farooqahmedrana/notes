@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -24,6 +25,11 @@ import android.widget.Toast;
 import android.widget.CheckBox;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.accounts.AccountManager;
+import android.accounts.Account;
+import android.content.*;
+import android.provider.*;
+import android.os.*;
 
 public class NotesActivity extends BaseActivity
 {
@@ -38,6 +44,11 @@ public class NotesActivity extends BaseActivity
 	
 	final int REQUEST_CODE = 1; 
      final int MENU_SEND = 1;
+
+    NotesDataSyncService dataService;
+    boolean bound = false;
+
+
 	
     /** Called when the activity is first created. */
     @Override
@@ -51,6 +62,8 @@ public class NotesActivity extends BaseActivity
         textTitle = (EditText) findViewById(R.id.text_title);
         textContent.addTextChangedListener(getWatcher());        
         handleIntent();
+        Intent intent = new Intent(this,NotesDataSyncService.class);
+        startService(intent);
     }
 
     private void handleIntent(){
@@ -64,6 +77,7 @@ public class NotesActivity extends BaseActivity
             }
         }
     }
+
 
     @Override    
     public boolean onCreateOptionsMenu(Menu menu){
@@ -96,25 +110,7 @@ public class NotesActivity extends BaseActivity
        collection.load(getApplicationContext());
     }
     
-/*    public void onSaveInstanceState(Bundle savedInstanceState){
-        super.onSaveInstanceState(savedInstanceState);
 
-        try{
-           savedInstanceState.putSerializable("noteslist",notes);
-        }
-        catch(Exception ex){ }         
-    }
-
-    public void onRestoreInstanceState(Bundle savedInstanceState){
-        super.onRestoreInstanceState(savedInstanceState);
-
-        try{
-           notes = (ArrayList<Note>) savedInstanceState.getSerializable("noteslist");
-        }
-        catch(Exception ex){ }
-
-    }
-*/    
     protected void newMenu(){
     	newNote();
     }
@@ -126,7 +122,7 @@ public class NotesActivity extends BaseActivity
     protected void sendMenu(){
      sendNote();
     }
-    
+
     public void checkboxClick(View v){
     	if(currentNote != null){
 	    
@@ -220,4 +216,32 @@ public class NotesActivity extends BaseActivity
     	
     	return watcher;
     }
+
+   private ServiceConnection connection = new ServiceConnection(){
+
+      public void onServiceConnected(ComponentName className, IBinder binder){
+         dataService = ((NotesDataSyncService.LocalBinder) binder).getService();
+         bound = true;         
+
+         showMessage(dataService.getStatus());
+      }
+
+      public void onServiceDisconnected(ComponentName className){
+         bound = false;         
+      }
+   };
+
+   protected void onStart(){
+      super.onStart();
+      Intent intent = new Intent(this,NotesDataSyncService.class);
+      bindService(intent,connection, Context.BIND_AUTO_CREATE);
+   }
+
+   protected void onStop(){
+      super.onStop();
+      if(bound){
+         unbindService(connection);
+      }
+   }
+
 }
