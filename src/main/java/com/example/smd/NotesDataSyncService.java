@@ -22,6 +22,10 @@ public class NotesDataSyncService extends Service {
       return binder;
    }
 
+   public void onDestroy(){
+      Toast.makeText(this,"Service stopped",Toast.LENGTH_SHORT).show();
+   }
+
    public class LocalBinder extends Binder{
       public NotesDataSyncService getService(){
          return NotesDataSyncService.this;

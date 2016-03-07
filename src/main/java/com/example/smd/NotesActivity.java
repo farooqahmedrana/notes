@@ -46,6 +46,7 @@ public class NotesActivity extends BaseActivity
      final int MENU_SEND = 1;
 
     NotesDataSyncService dataService;
+    ConnectivityReceiver receiver;
     boolean bound = false;
 
 
@@ -62,8 +63,7 @@ public class NotesActivity extends BaseActivity
         textTitle = (EditText) findViewById(R.id.text_title);
         textContent.addTextChangedListener(getWatcher());        
         handleIntent();
-        Intent intent = new Intent(this,NotesDataSyncService.class);
-        startService(intent);
+        startDataSyncService();
     }
 
     private void handleIntent(){
@@ -76,6 +76,23 @@ public class NotesActivity extends BaseActivity
              textContent.setText(text);
             }
         }
+    }
+
+    private void startDataSyncService(){
+       SharedPreferences preferences = getSharedPreferences("service",Context.MODE_PRIVATE);
+       boolean started = preferences.getBoolean("started",false);
+       SharedPreferences.Editor editor = preferences.edit();
+
+       Intent serviceIntent = new Intent(this,NotesDataSyncService.class);
+       startService(serviceIntent);
+
+       editor.putBoolean("started",true);       
+       editor.commit();
+
+//       IntentFilter intent = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
+       IntentFilter intent = new IntentFilter("com.example.smd.CONNECTIVITY_CHANGE");
+       receiver = new ConnectivityReceiver();
+	  registerReceiver(receiver,intent);       
     }
 
 
@@ -234,14 +251,19 @@ public class NotesActivity extends BaseActivity
    protected void onStart(){
       super.onStart();
       Intent intent = new Intent(this,NotesDataSyncService.class);
-      bindService(intent,connection, Context.BIND_AUTO_CREATE);
+//      bindService(intent,connection, Context.BIND_AUTO_CREATE);
    }
 
    protected void onStop(){
       super.onStop();
       if(bound){
-         unbindService(connection);
+//         unbindService(connection);
       }
+   }
+
+   protected void onDestroy(){
+      unregisterReceiver(receiver);
+      super.onDestroy();
    }
 
 }

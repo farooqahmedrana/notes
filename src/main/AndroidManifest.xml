@@ -32,6 +32,15 @@
                   android:exported="true" />
 
         <service android:name="NotesDataSyncService" />
+<!--
+        <receiver android:name="ConnectivityReceiver">   
+           <intent-filter>
+              <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />  
+                 <action android:name="com.example.smd.CONNECTIVITY_CHANGE" />
+          </intent-filter>   
+-       </receiver>
+-->
+
 
     </application>
 </manifest>
