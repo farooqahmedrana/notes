@@ -31,7 +31,8 @@
                   android:authorities="com.example.smd.notesprovider"
                   android:exported="true" />
 
-        <service android:name="NotesDataSyncService" />
+        <service android:name="NotesDataSyncService"
+                 android:process="com.example.smd.service"/>
 <!--
         <receiver android:name="ConnectivityReceiver">   
            <intent-filter>

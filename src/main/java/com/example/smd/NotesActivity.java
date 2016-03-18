@@ -30,6 +30,7 @@ import android.accounts.Account;
 import android.content.*;
 import android.provider.*;
 import android.os.*;
+import android.util.*;
 
 public class NotesActivity extends BaseActivity
 {
@@ -46,6 +47,8 @@ public class NotesActivity extends BaseActivity
      final int MENU_SEND = 1;
 
     NotesDataSyncService dataService;
+    Messenger messenger;
+    Messenger incomingMessenger = new Messenger(new IncomingHandler());
     ConnectivityReceiver receiver;
     boolean bound = false;
 
@@ -236,11 +239,22 @@ public class NotesActivity extends BaseActivity
 
    private ServiceConnection connection = new ServiceConnection(){
 
-      public void onServiceConnected(ComponentName className, IBinder binder){
-         dataService = ((NotesDataSyncService.LocalBinder) binder).getService();
-         bound = true;         
+      public void onServiceConnected(ComponentName className, IBinder binder) {
+/*         dataService = ((NotesDataSyncService.LocalBinder) binder).getService();
+        bound = true;         
 
          showMessage(dataService.getStatus());
+*/
+
+        messenger = new Messenger(binder);
+        bound = true;
+        Message message = Message.obtain(null,1);
+        message.replyTo = incomingMessenger;
+        try {
+           messenger.send(message);
+        } catch (RemoteException e) { Log.i("Notes","-------- exception --------"); }
+
+
       }
 
       public void onServiceDisconnected(ComponentName className){
@@ -248,16 +262,29 @@ public class NotesActivity extends BaseActivity
       }
    };
 
+   public class IncomingHandler extends Handler{
+ 
+      public void handleMessage(Message msg){
+         switch(msg.what){
+            case 1:
+               Bundle bundle = msg.getData();
+               Toast.makeText(getApplicationContext(),bundle.getString("result"),Toast.LENGTH_SHORT).show();
+            default:
+               super.handleMessage(msg);
+         }         
+      }
+   }
+
    protected void onStart(){
       super.onStart();
       Intent intent = new Intent(this,NotesDataSyncService.class);
-//      bindService(intent,connection, Context.BIND_AUTO_CREATE);
+      bindService(intent,connection, Context.BIND_AUTO_CREATE);
    }
 
    protected void onStop(){
       super.onStop();
       if(bound){
-//         unbindService(connection);
+         unbindService(connection);
       }
    }
 
