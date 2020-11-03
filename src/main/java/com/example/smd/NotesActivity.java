@@ -29,6 +29,7 @@ public class NotesActivity extends BaseActivity
 {
 	ArrayList<Note> notes;
 	Note currentNote;
+	INoteDAO dao;
 	
 	EditText textContent;
 	EditText textTitle;
@@ -49,7 +50,9 @@ public class NotesActivity extends BaseActivity
         importanceCheck = (CheckBox) findViewById(R.id.importance_check);
         textContent = (EditText) findViewById(R.id.text_content);
         textTitle = (EditText) findViewById(R.id.text_title);
-        textContent.addTextChangedListener(getWatcher());        
+        textContent.addTextChangedListener(getWatcher());
+//        dao = new NoteFileDAO(new File(getFilesDir(),"notes"));
+        dao = new NotesDbDAO(this);
         handleIntent();
     }
 
@@ -85,36 +88,19 @@ public class NotesActivity extends BaseActivity
 
     public void onPause(){
        super.onPause();
-       PersistableCollection<Note> collection = new PersistableCollection(notes);
-       collection.save(getApplicationContext());
+
+       for(Note note : notes){
+            note.save();
+       }
     }
 
     public void onResume(){
        super.onResume();
-       notes = new ArrayList<Note>();
-       PersistableCollection<Note> collection = new PersistableCollection(notes);
-       collection.load(getApplicationContext());
+
+        notes = Note.load(dao);
     }
     
-/*    public void onSaveInstanceState(Bundle savedInstanceState){
-        super.onSaveInstanceState(savedInstanceState);
 
-        try{
-           savedInstanceState.putSerializable("noteslist",notes);
-        }
-        catch(Exception ex){ }         
-    }
-
-    public void onRestoreInstanceState(Bundle savedInstanceState){
-        super.onRestoreInstanceState(savedInstanceState);
-
-        try{
-           notes = (ArrayList<Note>) savedInstanceState.getSerializable("noteslist");
-        }
-        catch(Exception ex){ }
-
-    }
-*/    
     protected void newMenu(){
     	newNote();
     }
@@ -141,7 +127,7 @@ public class NotesActivity extends BaseActivity
 	   String content = textContent.getText().toString();
 
 	   if(currentNote == null){
-		 currentNote = new Note(title,content);
+		 currentNote = new Note(title,content,dao);
 		 notes.add(currentNote);
 	   }
 
@@ -154,7 +140,7 @@ public class NotesActivity extends BaseActivity
     	textContent.removeTextChangedListener(getWatcher());     
     	textContent.setText("");
     	textContent.addTextChangedListener(getWatcher());
-     textTitle.setText("");
+        textTitle.setText("");
     	importanceCheck.setChecked(false);    	  
     	currentNote = null;
     }
@@ -166,13 +152,14 @@ public class NotesActivity extends BaseActivity
     }
 
     private void sendNote(){
-	   Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse("sms:"));
-    	   intent.putExtra("sms_body",currentNote.getContent());
 
-        if(intent.resolveActivity(getPackageManager()) != null){
-    	      startActivity(intent);
-        }
+	   Intent intent = new Intent(Intent.ACTION_VIEW);
+	   intent.setData(Uri.parse("sms:"));
+	   intent.putExtra("sms_body",currentNote.getContent());
+
+	   if(intent.resolveActivity(getPackageManager()) != null){
+	       startActivity(intent);
+       }
 
     }
 
@@ -186,8 +173,6 @@ public class NotesActivity extends BaseActivity
        	super.onActivityResult(requestCode, resultCode, data);
        	if(requestCode == REQUEST_CODE){
        		if(resultCode == RESULT_OK){
-//       			notes = (ArrayList<Note>) data.getSerializableExtra("list");
-       			
        			int selectedItemIndex = data.getIntExtra("selecteditemindex", -1);
        			if(selectedItemIndex != -1){
        				setNote(selectedItemIndex);       				

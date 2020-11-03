@@ -43,12 +43,8 @@ public class ListActivity extends BaseActivity
     {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-//        notes = (ArrayList<Note>) intent.getSerializableExtra("list");
+        notes = (ArrayList<Note>) intent.getSerializableExtra("list");
 
-        notes = new ArrayList<Note>();
-        PersistableCollection<Note> collection = new PersistableCollection(notes);
-        collection.load(getApplicationContext());
-       
         selectedItem = -1;        
         createView();
     }
